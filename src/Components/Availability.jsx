@@ -1,24 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function Availability({ onStatusChange }) {
-  const [status, setStatus] = useState('Not Answered');
+export default function Availability({ initialStatus = 'Not Answered', onStatusChange }) {
+  const [status, setStatus] = useState(initialStatus);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleResponse = (val) => {
-    setStatus(val);
-    if (onStatusChange) onStatusChange(val);
+  useEffect(() => {
+    if (initialStatus) {
+      setStatus(initialStatus);
+    }
+  }, [initialStatus]);
+
+  const handleSelect = (newStatus) => {
+    setStatus(newStatus);
+    setIsOpen(false);
+    if (onStatusChange) {
+      onStatusChange(newStatus);
+    }
   };
 
   return (
-    <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffeeba', padding: '12px 15px', borderRadius: '6px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>
-        <strong style={{ color: '#856404' }}>☀️ Morning Donor Prompt:</strong> Are you available to donate blood today?
-        <span style={{ marginLeft: '10px', fontWeight: 'bold', color: status === 'Available' ? '#27ae60' : '#c0392b' }}>[ Current: {status} ]</span>
-      </div>
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <button onClick={() => handleResponse('Available')} style={{ backgroundColor: '#27ae60', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Available</button>
-        <button onClick={() => handleResponse('Emergency Only')} style={{ backgroundColor: '#e67e22', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Emergency Only</button>
-        <button onClick={() => handleResponse('Not Available')} style={{ backgroundColor: '#95a5a6', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Not Available</button>
-      </div>
+    <div style={{ marginBottom: '12px', textAlign: 'right' }}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          backgroundColor: '#fff',
+          color: '#2c3e50',
+          border: '1px solid #e0e0e0',
+          padding: '6px 14px',
+          borderRadius: '20px',
+          cursor: 'pointer',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.06)'
+        }}
+      >
+        🩺 Donor Status:{' '}
+        <span style={{ color: status.includes('Available Today') ? '#27ae60' : '#c0392b' }}>
+          {status}
+        </span>{' '}
+        {isOpen ? '▲' : '▾'}
+      </button>
+
+      {isOpen && (
+        <div
+          style={{
+            marginTop: '8px',
+            backgroundColor: '#fff',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '10px',
+            textAlign: 'left',
+            borderLeft: '4px solid #2980b9'
+          }}
+        >
+          <span style={{ fontSize: '13px', color: '#2c3e50', fontWeight: 'bold' }}>
+            Are you available to donate blood today?
+          </span>
+
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button type="button" onClick={() => handleSelect('Available Today ✅')} style={btnStyle('#27ae60')}>
+              ✅ Available Today
+            </button>
+            <button type="button" onClick={() => handleSelect('Emergency Only 🚨')} style={btnStyle('#e67e22')}>
+              🚨 Emergency Only
+            </button>
+            <button type="button" onClick={() => handleSelect('Not Available ❌')} style={btnStyle('#7f8c8d')}>
+              ❌ Not Available
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+const btnStyle = (bg) => ({
+  backgroundColor: bg,
+  color: '#fff',
+  border: 'none',
+  padding: '6px 12px',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  fontSize: '12px'
+});

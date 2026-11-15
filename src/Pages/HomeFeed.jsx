@@ -1,41 +1,134 @@
 import React, { useState } from 'react';
-import LocationMatch from '../components/LocationMatch';
 
-const mockRequests = [
-  { id: 'REQ-101', bloodGroup: 'A+', units: 2, hospital: 'Dhaka Medical College', distance: '2.5 km', reason: 'Emergency Surgery', type: 'ASAP' },
-  { id: 'REQ-102', bloodGroup: 'O-', units: 1, hospital: 'Square Hospital', distance: '4.1 km', reason: 'Thalassemia Patient', type: 'Scheduled' }
-];
+export default function HomeFeed({
+  requests = [],
+  collaborations = [],
+  onAcceptDonate,
+  onReferSuccess,
+  onOpenChat,
+  onGoToCreate
+}) {
+  const [referModalId, setReferModalId] = useState(null);
+  const [friendName, setFriendName] = useState('');
+  const [friendPhone, setFriendPhone] = useState('');
 
-export default function HomeFeed() {
-  const [filterGroup, setFilterGroup] = useState('All');
-  const filteredRequests = filterGroup === 'All' ? mockRequests : mockRequests.filter(r => r.bloodGroup === filterGroup);
+  const handleReferSubmit = (e, reqId) => {
+    e.preventDefault();
+    if (!friendName.trim() || !friendPhone.trim()) return;
+    if (onReferSuccess) {
+      onReferSuccess(reqId, { friendName, friendPhone });
+    }
+    setFriendName('');
+    setFriendPhone('');
+    setReferModalId(null);
+  };
 
   return (
     <div>
-      <LocationMatch isASAP={true} />
-      <h2>🩸 Centralized Blood Requests Feed</h2>
-      <div style={{ marginBottom: '15px' }}>
-        <label style={{ fontWeight: 'bold' }}>Filter Blood Group: </label>
-        <select value={filterGroup} onChange={(e) => setFilterGroup(e.target.value)} style={{ padding: '6px' }}>
-          <option value="All">All Groups</option>
-          <option value="A+">A+</option><option value="O-">O-</option><option value="B+">B+</option><option value="AB+">AB+</option>
-        </select>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', flexWrap: 'wrap', gap: '10px' }}>
+        <h2 style={{ color: '#c0392b', margin: 0 }}>🩸 Live Emergency Blood Feed ({requests.length})</h2>
+        <button
+          onClick={onGoToCreate}
+          style={{ backgroundColor: '#c0392b', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+        >
+          + Create Blood Request
+        </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '15px' }}>
-        {filteredRequests.map((req) => (
-          <div key={req.id} style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px', borderLeft: req.type === 'ASAP' ? '5px solid #e74c3c' : '5px solid #3498db', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#c0392b' }}>{req.bloodGroup} ({req.type})</h3>
-            <p style={{ margin: '4px 0' }}><strong>Hospital:</strong> {req.hospital}</p>
-            <p style={{ margin: '4px 0' }}><strong>Units Needed:</strong> {req.units} Bag(s)</p>
-            <p style={{ margin: '4px 0' }}><strong>Approx Distance:</strong> {req.distance}</p>
-            <p style={{ margin: '4px 0' }}><strong>Reason:</strong> {req.reason}</p>
-            <button onClick={() => alert('Donor Offer Sent to Requester!')} style={{ width: '100%', backgroundColor: '#27ae60', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', marginTop: '10px' }}>
-              Offer to Donate
-            </button>
-          </div>
-        ))}
-      </div>
+      {requests.length === 0 ? (
+        <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '8px', textAlign: 'center', border: '1px dashed #ccc' }}>
+          <h3 style={{ color: '#555', marginTop: 0 }}>No active blood requests right now</h3>
+          <p style={{ color: '#777', fontSize: '14px' }}>Click <strong>+ Create Blood Request</strong> above to post an emergency request.</p>
+        </div>
+      ) : (
+        requests.map((req) => {
+          const collab = collaborations.find((c) => c.requestId === req.id);
+
+          return (
+            <div
+              key={req.id}
+              style={{
+                backgroundColor: '#fff',
+                padding: '18px',
+                borderRadius: '8px',
+                marginBottom: '15px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                borderLeft: `6px solid ${collab ? '#27ae60' : '#c0392b'}`
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <span style={{ backgroundColor: '#c0392b', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontWeight: 'bold', marginRight: '8px' }}>
+                    {req.bloodGroup}
+                  </span>
+                  <strong style={{ fontSize: '17px' }}>Patient: {req.patient}</strong>
+                  <p style={{ margin: '6px 0 2px 0', color: '#444' }}>
+                    🏥 <strong>Hospital:</strong> {req.hospital} ({req.location})
+                  </p>
+                  <p style={{ margin: '2px 0', color: '#666', fontSize: '14px' }}>
+                    🩸 {req.bags || 1} Bag(s) | ⏰ {req.urgency} | 📞 {req.contact}
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => onAcceptDonate(req)}
+                    style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                  >
+                    {collab ? '✅ Accepted (Open Dash)' : '🩸 I Will Donate'}
+                  </button>
+
+                  <button
+                    onClick={() => setReferModalId(referModalId === req.id ? null : req.id)}
+                    style={{ backgroundColor: '#2980b9', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                  >
+                    🤝 Refer a Friend
+                  </button>
+
+                  {collab && (
+                    <button
+                      onClick={() => onOpenChat(collab)}
+                      style={{ backgroundColor: '#8e44ad', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
+                      💬 Chat
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {referModalId === req.id && (
+                <form
+                  onSubmit={(e) => handleReferSubmit(e, req.id)}
+                  style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f1f3f5', borderRadius: '6px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+                >
+                  <input
+                    type="text"
+                    required
+                    placeholder="Friend's Name"
+                    value={friendName}
+                    onChange={(e) => setFriendName(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                  />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Friend's Phone"
+                    value={friendPhone}
+                    onChange={(e) => setFriendPhone(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                  />
+                  <button
+                    type="submit"
+                    style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                  >
+                    Submit Referral
+                  </button>
+                </form>
+              )}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
