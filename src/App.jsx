@@ -64,6 +64,7 @@ export default function App() {
   const [toastAlert, setToastAlert] = useState(null);
 
   const isAdmin = user?.role === 'admin' || user?.isAdmin === true;
+  const showRightMap = activeTab === 'feed' || activeTab === 'chat';
 
   useEffect(() => {
     if (user) {
@@ -227,12 +228,12 @@ export default function App() {
             position: 'fixed',
             bottom: '22px',
             right: '22px',
-            backgroundColor: '#2c3e50',
+            backgroundColor: '#1e293b',
             color: '#fff',
             padding: '14px 18px',
-            borderRadius: '8px',
-            boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
-            borderLeft: '5px solid #f1c40f',
+            borderRadius: '10px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            borderLeft: '5px solid #f43f5e',
             zIndex: 2000,
             maxWidth: '340px',
             display: 'flex',
@@ -254,7 +255,7 @@ export default function App() {
       <header
         style={{
           width: '100%',
-          background: 'linear-gradient(90deg, #8b0000 0%, #c0392b 100%)',
+          background: 'linear-gradient(90deg, #9f1239 0%, #e11d48 100%)',
           color: 'white',
           padding: '14px 28px',
           display: 'flex',
@@ -262,14 +263,14 @@ export default function App() {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '12px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.15)'
+          boxShadow: '0 4px 14px rgba(159, 18, 57, 0.2)'
         }}
       >
         <div>
           <h1 onClick={() => setActiveTab('feed')} style={{ cursor: 'pointer', margin: 0, fontSize: '24px' }}>
             🩸 LifeLink
           </h1>
-          <small style={{ opacity: 0.92 }}>
+          <small style={{ opacity: 0.94 }}>
             👤 {user.name} ({user.bloodGroup}) • 🏅 {user.donationCount || 0} Donation(s) {isAdmin && '• 🛡️ Admin'}
           </small>
         </div>
@@ -307,11 +308,11 @@ export default function App() {
           <button
             onClick={handleLogout}
             style={{
-              backgroundColor: '#1f2937',
+              backgroundColor: '#0f172a',
               color: 'white',
               border: 'none',
               padding: '8px 14px',
-              borderRadius: '5px',
+              borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: 'bold',
               fontSize: '13px'
@@ -393,12 +394,12 @@ export default function App() {
                 onDeleteRequest={handleDeleteRequest}
               />
             ) : (
-              <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '8px', textAlign: 'center', borderTop: '5px solid #c0392b' }}>
-                <h2 style={{ color: '#c0392b', marginTop: 0 }}>⛔ Access Denied</h2>
+              <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '8px', textAlign: 'center', borderTop: '5px solid #e11d48' }}>
+                <h2 style={{ color: '#e11d48', marginTop: 0 }}>⛔ Access Denied</h2>
                 <p style={{ color: '#555' }}>Only authorized Admins can access the Dashboard.</p>
                 <button
                   onClick={() => setActiveTab('feed')}
-                  style={{ backgroundColor: '#2c3e50', color: '#fff', border: 'none', padding: '9px 16px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                  style={{ backgroundColor: '#1e293b', color: '#fff', border: 'none', padding: '9px 16px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
                 >
                   Back to Feed
                 </button>
@@ -408,31 +409,34 @@ export default function App() {
           {activeTab === 'certificate' && <Certificate user={user} />}
         </div>
 
-        <aside
-          style={{
-            flex: '0 0 360px',
-            width: '360px',
-            maxWidth: '100%',
-            position: 'sticky',
-            top: '20px'
-          }}
-        >
-          <Location
-            currentLocation={user.cityCountry}
-            onLocationUpdate={(locData) => setUser((prev) => ({ ...prev, ...locData }))}
-          />
-        </aside>
+        {/* Map শুধুমাত্র Feed এবং Chat ট্যাবেই দেখাবে */}
+        {showRightMap && (
+          <aside
+            style={{
+              flex: '0 0 360px',
+              width: '360px',
+              maxWidth: '100%',
+              position: 'sticky',
+              top: '20px'
+            }}
+          >
+            <Location
+              currentLocation={user.cityCountry}
+              onLocationUpdate={(locData) => setUser((prev) => ({ ...prev, ...locData }))}
+            />
+          </aside>
+        )}
       </main>
     </div>
   );
 }
 
 const btnStyle = (active) => ({
-  backgroundColor: active ? 'rgba(0, 0, 0, 0.28)' : 'transparent',
+  backgroundColor: active ? 'rgba(0, 0, 0, 0.25)' : 'transparent',
   color: 'white',
   border: active ? '1px solid rgba(255,255,255,0.4)' : '1px solid transparent',
   padding: '8px 12px',
-  borderRadius: '5px',
+  borderRadius: '6px',
   cursor: 'pointer',
   fontWeight: 'bold',
   fontSize: '13px'

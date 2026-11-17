@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 export default function Auth({ onLoginSuccess }) {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -64,12 +66,26 @@ export default function Auth({ onLoginSuccess }) {
     }
   };
 
+  const getInputStyle = (fieldName) => ({
+    width: '100%',
+    padding: '11px 14px',
+    borderRadius: '10px',
+    border: focusedField === fieldName ? '1.5px solid #dc2626' : '1.5px solid #e2e8f0',
+    backgroundColor: focusedField === fieldName ? '#fff' : '#f8fafc',
+    boxShadow: focusedField === fieldName ? '0 0 0 4px rgba(220, 38, 38, 0.14)' : 'none',
+    fontSize: '14px',
+    color: '#0f172a',
+    outline: 'none',
+    transition: 'all 0.2s ease',
+    boxSizing: 'border-box'
+  });
+
   return (
     <div
       style={{
         minHeight: '100vh',
         width: '100%',
-        background: 'radial-gradient(circle at 20% 20%, #b71c1c 0%, #6d0707 48%, #2c0202 100%)',
+        backgroundColor: '#070203',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -78,170 +94,393 @@ export default function Auth({ onLoginSuccess }) {
         overflow: 'hidden'
       }}
     >
+      {/* Keyframes for Rotating Red & Black Background */}
+      <style>{`
+        @keyframes spinRedBlack {
+          0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+          }
+          100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+          }
+        }
+        @keyframes reverseSpinGlow {
+          0% {
+            transform: translate(-50%, -50%) rotate(360deg);
+          }
+          100% {
+            transform: translate(-50%, -50%) rotate(0deg);
+          }
+        }
+      `}</style>
+
+      {/* Layer 1: Primary Rotating Red & Black Conic Swirl */}
       <div
         style={{
           position: 'absolute',
-          top: '-80px',
-          left: '-80px',
-          width: '320px',
-          height: '320px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255, 77, 77, 0.25) 0%, transparent 70%)',
-          pointerEvents: 'none'
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '-100px',
-          right: '-60px',
-          width: '380px',
-          height: '380px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(231, 76, 60, 0.22) 0%, transparent 70%)',
-          pointerEvents: 'none'
+          top: '50%',
+          left: '50%',
+          width: '210vmax',
+          height: '210vmax',
+          background:
+            'conic-gradient(from 0deg, #050203 0deg, #991b1b 55deg, #09090b 120deg, #dc2626 185deg, #040102 250deg, #7f1d1d 310deg, #050203 360deg)',
+          animation: 'spinRedBlack 14s linear infinite',
+          filter: 'blur(42px)',
+          pointerEvents: 'none',
+          zIndex: 0
         }}
       />
 
+      {/* Layer 2: Counter-Rotating Deep Crimson & Obsidian Aura */}
       <div
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.97)',
-          padding: '32px 28px',
-          borderRadius: '14px',
-          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.45)',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '170vmax',
+          height: '170vmax',
+          background:
+            'radial-gradient(circle at 30% 30%, rgba(225, 29, 72, 0.45) 0%, transparent 45%), radial-gradient(circle at 70% 70%, rgba(127, 29, 29, 0.55) 0%, transparent 50%), radial-gradient(circle at 70% 25%, rgba(0, 0, 0, 0.85) 0%, transparent 50%)',
+          animation: 'reverseSpinGlow 20s linear infinite',
+          pointerEvents: 'none',
+          zIndex: 0
+        }}
+      />
+
+      {/* Main Split-Screen Card */}
+      <div
+        style={{
           width: '100%',
-          maxWidth: '430px',
-          borderTop: '6px solid #8b0000',
+          maxWidth: '900px',
+          backgroundColor: '#ffffff',
+          borderRadius: '22px',
+          boxShadow: '0 28px 70px rgba(0, 0, 0, 0.8), 0 0 36px rgba(220, 38, 38, 0.28)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          overflow: 'hidden',
           position: 'relative',
-          zIndex: 1
+          zIndex: 1,
+          border: '1px solid rgba(220, 38, 38, 0.35)'
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '22px' }}>
-          <div
+        {/* LEFT PANEL: Red & Black Theme Branding */}
+        <div
+          style={{
+            flex: '1 1 350px',
+            background: 'linear-gradient(155deg, #090304 0%, #450a0a 48%, #b91c1c 100%)',
+            color: '#ffffff',
+            padding: '44px 36px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Decorative Pulse SVG */}
+          <svg
+            viewBox="0 0 400 120"
             style={{
-              width: '56px',
-              height: '56px',
-              margin: '0 auto 10px auto',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #c0392b, #7f0000)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '28px',
-              boxShadow: '0 4px 12px rgba(192, 57, 43, 0.4)'
+              position: 'absolute',
+              bottom: '24px',
+              left: 0,
+              width: '100%',
+              opacity: 0.2,
+              pointerEvents: 'none'
             }}
           >
-            🩸
+            <path
+              d="M0,60 L90,60 L110,20 L135,100 L160,40 L180,75 L200,60 L400,60"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+
+          {/* Top Branding & Headline */}
+          <div>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                backdropFilter: 'blur(8px)',
+                padding: '8px 18px',
+                borderRadius: '30px',
+                border: '1px solid rgba(248, 113, 113, 0.35)',
+                marginBottom: '26px'
+              }}
+            >
+              <span style={{ fontSize: '20px' }}>🩸</span>
+              <strong style={{ fontSize: '16px', letterSpacing: '0.6px' }}>LifeLink</strong>
+            </div>
+
+            <h1
+              style={{
+                fontSize: '36px',
+                lineHeight: '1.22',
+                margin: 0,
+                fontWeight: '800',
+                letterSpacing: '-0.5px'
+              }}
+            >
+              Every Drop <br />
+              Saves a Precious Life.
+            </h1>
           </div>
-          <h1 style={{ color: '#8b0000', margin: '0 0 4px 0', fontSize: '28px', letterSpacing: '0.5px' }}>
-            LifeLink
-          </h1>
-          <p style={{ color: '#555', fontSize: '13px', margin: 0 }}>
-            {isRegister ? 'Join the Emergency Blood Donor Network' : 'Every Drop Counts — Login to Save Lives'}
-          </p>
+
+          <div style={{ marginTop: '48px', fontSize: '13px', color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>
+            Trusted by Donors, Hospitals & Volunteers ❤️
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', backgroundColor: '#f3eaea', padding: '4px', borderRadius: '8px' }}>
-          <button type="button" onClick={() => { setIsRegister(false); setError(''); }} style={toggleBtnStyle(!isRegister)}>
-            Login
-          </button>
-          <button type="button" onClick={() => { setIsRegister(true); setError(''); }} style={toggleBtnStyle(isRegister)}>
-            Register
-          </button>
-        </div>
-
-        {error && (
-          <div style={{ backgroundColor: '#fdecea', color: '#a93226', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '14px', fontWeight: 'bold', border: '1px solid #f5b7b1' }}>
-            ⚠️ {error}
+        {/* RIGHT PANEL: Clean Auth Form */}
+        <div
+          style={{
+            flex: '1 1 400px',
+            padding: '40px 36px',
+            backgroundColor: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}
+        >
+          <div style={{ marginBottom: '22px' }}>
+            <h2 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: '24px', fontWeight: '700' }}>
+              {isRegister ? 'Create your account' : 'Welcome back'}
+            </h2>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
+              {isRegister
+                ? 'Register as a donor or requester to join LifeLink'
+                : 'Enter your credentials to access your dashboard'}
+            </p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {isRegister && (
-            <div>
-              <label style={labelStyle}>Full Name *</label>
-              <input type="text" name="name" required placeholder="Enter your full name" value={formData.name} onChange={handleChange} style={inputStyle} />
+          <div
+            style={{
+              display: 'flex',
+              backgroundColor: '#f1f5f9',
+              padding: '4px',
+              borderRadius: '12px',
+              marginBottom: '20px'
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => { setIsRegister(false); setError(''); }}
+              style={toggleBtnStyle(!isRegister)}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => { setIsRegister(true); setError(''); }}
+              style={toggleBtnStyle(isRegister)}
+            >
+              Register
+            </button>
+          </div>
+
+          {error && (
+            <div
+              style={{
+                backgroundColor: '#fef2f2',
+                color: '#b91c1c',
+                padding: '11px 14px',
+                borderRadius: '10px',
+                fontSize: '13px',
+                marginBottom: '16px',
+                fontWeight: '600',
+                border: '1px solid #fecaca'
+              }}
+            >
+              ⚠️ {error}
             </div>
           )}
 
-          <div>
-            <label style={labelStyle}>Email *</label>
-            <input type="email" name="email" required placeholder="you@example.com" value={formData.email} onChange={handleChange} style={inputStyle} />
-          </div>
-
-          <div>
-            <label style={labelStyle}>Password *</label>
-            <input type="password" name="password" required placeholder="Enter password" value={formData.password} onChange={handleChange} style={inputStyle} />
-          </div>
-
-          {isRegister && (
-            <>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>
-                  <label style={labelStyle}>Blood Group *</label>
-                  <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} style={inputStyle}>
-                    {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map((bg) => (
-                      <option key={bg} value={bg}>{bg}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={labelStyle}>Contact Number *</label>
-                  <input type="text" name="contact" required placeholder="017XXXXXXXX" value={formData.contact} onChange={handleChange} style={inputStyle} />
-                </div>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {isRegister && (
+              <div>
+                <label style={labelStyle}>Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  placeholder="e.g., Ahosan Sabbir"
+                  value={formData.name}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField('')}
+                  style={getInputStyle('name')}
+                />
               </div>
+            )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>
-                  <label style={labelStyle}>City / Country *</label>
-                  <input type="text" name="cityCountry" required placeholder="Dhaka, Bangladesh" value={formData.cityCountry} onChange={handleChange} style={inputStyle} />
-                </div>
+            <div>
+              <label style={labelStyle}>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField('')}
+                style={getInputStyle('email')}
+              />
+            </div>
 
-                <div>
-                  <label style={labelStyle}>Account Role *</label>
-                  <select name="role" value={formData.role} onChange={handleChange} style={inputStyle}>
-                    <option value="user">User (Donor/Requester)</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
+            <div>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField('')}
+                  style={{ ...getInputStyle('password'), paddingRight: '42px' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    color: '#64748b'
+                  }}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
               </div>
-            </>
-          )}
+            </div>
 
-          <button
-            type="submit"
-            style={{
-              background: 'linear-gradient(90deg, #8b0000 0%, #c0392b 100%)',
-              color: '#fff',
-              border: 'none',
-              padding: '12px',
-              borderRadius: '7px',
-              fontWeight: 'bold',
-              fontSize: '15px',
-              cursor: 'pointer',
-              marginTop: '6px',
-              boxShadow: '0 4px 12px rgba(139, 0, 0, 0.35)'
-            }}
-          >
-            {isRegister ? '🩸 Create LifeLink Account' : '🔓 Login to LifeLink'}
-          </button>
-        </form>
+            {isRegister && (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>Blood Group</label>
+                    <select
+                      name="bloodGroup"
+                      value={formData.bloodGroup}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('bloodGroup')}
+                      onBlur={() => setFocusedField('')}
+                      style={getInputStyle('bloodGroup')}
+                    >
+                      {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map((bg) => (
+                        <option key={bg} value={bg}>{bg}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Phone Number</label>
+                    <input
+                      type="text"
+                      name="contact"
+                      required
+                      placeholder="017XXXXXXXX"
+                      value={formData.contact}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('contact')}
+                      onBlur={() => setFocusedField('')}
+                      style={getInputStyle('contact')}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>City, Country</label>
+                    <input
+                      type="text"
+                      name="cityCountry"
+                      required
+                      placeholder="Dhaka, Bangladesh"
+                      value={formData.cityCountry}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('cityCountry')}
+                      onBlur={() => setFocusedField('')}
+                      style={getInputStyle('cityCountry')}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Account Role</label>
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('role')}
+                      onBlur={() => setFocusedField('')}
+                      style={getInputStyle('role')}
+                    >
+                      <option value="user">User (Donor / Requester)</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <button
+              type="submit"
+              style={{
+                background: 'linear-gradient(90deg, #111827 0%, #991b1b 50%, #dc2626 100%)',
+                color: '#fff',
+                border: 'none',
+                padding: '13px',
+                borderRadius: '10px',
+                fontWeight: '700',
+                fontSize: '15px',
+                cursor: 'pointer',
+                marginTop: '6px',
+                boxShadow: '0 8px 20px rgba(185, 28, 28, 0.35)',
+                transition: 'transform 0.15s ease'
+              }}
+            >
+              {isRegister ? 'Create LifeLink Account →' : 'Sign In to LifeLink →'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
 
-const labelStyle = { display: 'block', fontWeight: 'bold', fontSize: '13px', marginBottom: '4px', color: '#3b1c1c' };
-const inputStyle = { width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #d5c4c4', fontSize: '14px', boxSizing: 'border-box' };
+const labelStyle = {
+  display: 'block',
+  fontWeight: '600',
+  fontSize: '13px',
+  marginBottom: '6px',
+  color: '#334155'
+};
+
 const toggleBtnStyle = (active) => ({
   flex: 1,
-  padding: '8px',
+  padding: '9px',
   border: 'none',
-  borderRadius: '6px',
+  borderRadius: '9px',
   cursor: 'pointer',
-  fontWeight: 'bold',
-  fontSize: '14px',
-  backgroundColor: active ? '#8b0000' : 'transparent',
-  color: active ? '#fff' : '#5c2b2b'
+  fontWeight: '700',
+  fontSize: '13px',
+  transition: 'all 0.2s ease',
+  backgroundColor: active ? '#111827' : 'transparent',
+  color: active ? '#ffffff' : '#64748b',
+  boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.18)' : 'none'
 });

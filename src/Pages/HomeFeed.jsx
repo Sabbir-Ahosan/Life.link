@@ -56,13 +56,13 @@ export default function HomeFeed({
                 borderLeft: `6px solid ${collab ? '#27ae60' : '#c0392b'}`
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ flex: 1, minWidth: '240px' }}>
                   <span style={{ backgroundColor: '#c0392b', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontWeight: 'bold', marginRight: '8px' }}>
                     {req.bloodGroup}
                   </span>
                   <strong style={{ fontSize: '17px' }}>Patient: {req.patient}</strong>
-                  <p style={{ margin: '6px 0 2px 0', color: '#444' }}>
+                  <p style={{ margin: '8px 0 3px 0', color: '#444' }}>
                     🏥 <strong>Hospital:</strong> {req.hospital} ({req.location})
                   </p>
                   <p style={{ margin: '2px 0', color: '#666', fontSize: '14px' }}>
@@ -70,17 +70,18 @@ export default function HomeFeed({
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {/* Right-side top aligned buttons */}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignSelf: 'flex-start' }}>
                   <button
                     onClick={() => (collab ? onOpenChat(collab) : onAcceptDonate(req))}
-                    style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                    style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}
                   >
                     {collab ? '✅ Open Live Chat' : '🩸 I Will Donate'}
                   </button>
 
                   <button
                     onClick={() => setReferModalId(referModalId === req.id ? null : req.id)}
-                    style={{ backgroundColor: '#2980b9', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+                    style={{ backgroundColor: '#2980b9', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}
                   >
                     🤝 Refer a Friend
                   </button>
