@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-export default function Location({ currentLocation = '', onLocationUpdate }) {
-  const [cityInput, setCityInput] = useState(currentLocation);
-  const [coords, setCoords] = useState({ lat: 23.8103, lng: 90.4125 });
-  const [showMap, setShowMap] = useState(true);
-  const [detecting, setDetecting] = useState(false);
+export default function Location({ currentLocation, onLocationUpdate }) {
+  const [cityCountry, setCityCountry] = useState(currentLocation || 'Dhaka, Bangladesh');
+  const [coords, setCoords] = useState({ latitude: 23.8103, longitude: 90.4125 });
+  const [loading, setLoading] = useState(false);
 
   const handleDetectGPS = () => {
     if (!navigator.geolocation) {
@@ -12,163 +11,82 @@ export default function Location({ currentLocation = '', onLocationUpdate }) {
       return;
     }
 
-    setDetecting(true);
+    setLoading(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = Number(position.coords.latitude.toFixed(5));
-        const lng = Number(position.coords.longitude.toFixed(5));
-        const gpsLabel = `GPS (${lat}, ${lng})`;
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setCoords({ latitude, longitude });
 
-        setCoords({ lat, lng });
-        setCityInput(gpsLabel);
-        setShowMap(true);
-        setDetecting(false);
+        try {
+          const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const geoData = await geoRes.json();
+          const city = geoData.address?.city || geoData.address?.town || geoData.address?.state || 'Dhaka';
+          const country = geoData.address?.country || 'Bangladesh';
+          const formatted = `${city}, ${country}`;
 
-        if (onLocationUpdate) {
-          onLocationUpdate({ cityCountry: gpsLabel, latitude: lat, longitude: lng });
+          setCityCountry(formatted);
+          if (onLocationUpdate) onLocationUpdate({ cityCountry: formatted, latitude, longitude });
+        } catch {
+          if (onLocationUpdate) onLocationUpdate({ cityCountry, latitude, longitude });
+        } finally {
+          setLoading(false);
         }
       },
-      (err) => {
-        setDetecting(false);
-        alert('Could not access GPS location: ' + err.message);
+      () => {
+        setLoading(false);
+        alert('Unable to access GPS location.');
       }
     );
   };
 
-  const handleManualSave = async (e) => {
+  const handleManualSave = (e) => {
     e.preventDefault();
-    if (!cityInput.trim()) return;
-
-    let updatedCoords = coords;
-    try {
-      const geoRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityInput)}`
-      );
-      const geoData = await geoRes.json();
-      if (geoData && geoData.length > 0) {
-        updatedCoords = {
-          lat: Number(parseFloat(geoData[0].lat).toFixed(5)),
-          lng: Number(parseFloat(geoData[0].lon).toFixed(5))
-        };
-        setCoords(updatedCoords);
-        setShowMap(true);
-      }
-    } catch {
-      // অফলাইন থাকলে আগের কো-অর্ডিনেট রাখবে
-    }
-
-    if (onLocationUpdate) {
-      onLocationUpdate({
-        cityCountry: cityInput,
-        latitude: updatedCoords.lat,
-        longitude: updatedCoords.lng
-      });
-    }
-    alert('📍 Location & Map updated!');
+    if (onLocationUpdate) onLocationUpdate({ cityCountry, ...(coords || {}) });
+    alert('📍 Location updated!');
   };
 
-  const bbox = `${coords.lng - 0.015}%2C${coords.lat - 0.015}%2C${coords.lng + 0.015}%2C${coords.lat + 0.015}`;
-  const osmEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`;
-
   return (
-    <div style={{ backgroundColor: '#fff', padding: '16px 18px', borderRadius: '8px', marginBottom: '20px', boxShadow: '0 2px 6px rgba(0,0,0,0.06)', borderLeft: '5px solid #27ae60' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-        <div>
-          <strong style={{ color: '#2c3e50', fontSize: '15px' }}>📍 Live Donor Location:</strong>
-          <span style={{ marginLeft: '8px', fontSize: '14px', color: '#1e8449', fontWeight: 'bold' }}>
-            {cityInput || 'Dhaka, Bangladesh (Default)'}
-          </span>
-        </div>
+    <div style={{ backgroundColor: '#fff', padding: '18px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.08)', borderTop: '4px solid #c0392b' }}>
+      <h3 style={{ color: '#2c3e50', marginTop: 0, marginBottom: '12px', fontSize: '16px' }}>
+        📍 Live Donor & Hospital Map
+      </h3>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <iframe
+        title="Live Location Map"
+        width="100%"
+        height="280"
+        style={{ border: '1px solid #ddd', borderRadius: '8px', marginBottom: '12px' }}
+        src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.longitude - 0.03}%2C${coords.latitude - 0.03}%2C${coords.longitude + 0.03}%2C${coords.latitude + 0.03}&layer=mapnik&marker=${coords.latitude}%2C${coords.longitude}`}
+      />
+
+      <form onSubmit={handleManualSave} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <input
+          type="text"
+          value={cityCountry}
+          onChange={(e) => setCityCountry(e.target.value)}
+          placeholder="City, Country"
+          style={{ width: '100%', padding: '9px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '13px' }}
+        />
+
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="submit"
+            style={{ flex: 1, backgroundColor: '#2980b9', color: '#fff', border: 'none', padding: '9px 10px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+          >
+            Save Location
+          </button>
           <button
             type="button"
             onClick={handleDetectGPS}
-            disabled={detecting}
-            style={{
-              backgroundColor: '#27ae60',
-              color: 'white',
-              border: 'none',
-              padding: '7px 12px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '13px'
-            }}
+            disabled={loading}
+            style={{ flex: 1, backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '9px 10px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
           >
-            {detecting ? 'Detecting...' : '🛰️ Auto-Detect GPS'}
-          </button>
-
-          <form onSubmit={handleManualSave} style={{ display: 'flex', gap: '6px' }}>
-            <input
-              type="text"
-              placeholder="Search City / Hospital / Area..."
-              value={cityInput}
-              onChange={(e) => setCityInput(e.target.value)}
-              style={{ padding: '6px 10px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '13px' }}
-            />
-            <button
-              type="submit"
-              style={{
-                backgroundColor: '#2c3e50',
-                color: 'white',
-                border: 'none',
-                padding: '7px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '13px'
-              }}
-            >
-              Locate & Save
-            </button>
-          </form>
-
-          <button
-            type="button"
-            onClick={() => setShowMap(!showMap)}
-            style={{
-              backgroundColor: '#ecf0f1',
-              color: '#2c3e50',
-              border: '1px solid #bdc3c7',
-              padding: '6px 10px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '12px'
-            }}
-          >
-            {showMap ? '▲ Hide Map' : '🗺️ Show Map'}
+            {loading ? '📡 Locating...' : '🎯 Use GPS'}
           </button>
         </div>
-      </div>
-
-      {showMap && (
-        <div style={{ marginTop: '14px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #ddd' }}>
-          <iframe
-            title="Donor Live Location Map"
-            width="100%"
-            height="240"
-            frameBorder="0"
-            scrolling="no"
-            src={osmEmbedUrl}
-            style={{ display: 'block' }}
-          />
-          <div style={{ backgroundColor: '#f8f9fa', padding: '6px 12px', fontSize: '12px', color: '#555', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-            <span>
-              📌 Coordinates: <strong>{coords.lat}, {coords.lng}</strong>
-            </span>
-            <a
-              href={`https://www.google.com/maps?q=${coords.lat},${coords.lng}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: '#2980b9', fontWeight: 'bold', textDecoration: 'none' }}
-            >
-              Open Fullscreen in Google Maps ↗
-            </a>
-          </div>
-        </div>
-      )}
+      </form>
     </div>
   );
 }

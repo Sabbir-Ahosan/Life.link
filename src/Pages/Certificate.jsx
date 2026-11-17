@@ -1,210 +1,215 @@
 import React from 'react';
 
 export default function Certificate({ user }) {
-  const today = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
-  const verificationId = `LL-${user?.id ? String(user.id).slice(-6) : 'GLOBAL'}`;
+  const certId = `LL-${String(user?.id || '2026').slice(-6).toUpperCase()}`;
+  const donationCount = user?.donationCount || 0;
 
   return (
-    <div style={{ textAlign: 'center', padding: '10px' }}>
-      <style>
-        {`
-          @page {
-            size: A4 landscape;
-            margin: 0;
-          }
-          @media print {
-            body * {
-              visibility: hidden;
-            }
-            #a4-certificate-sheet, #a4-certificate-sheet * {
-              visibility: visible;
-            }
-            #a4-certificate-sheet {
-              position: fixed;
-              left: 0;
-              top: 0;
-              width: 297mm !important;
-              height: 210mm !important;
-              margin: 0 !important;
-              padding: 15mm !important;
-              box-sizing: border-box !important;
-              box-shadow: none !important;
-              border-radius: 0 !important;
-              background: #fffdf9 !important;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            .no-print {
-              display: none !important;
-            }
-          }
-        `}
-      </style>
-
-      <div
-        id="a4-certificate-sheet"
-        style={{
-          width: '100%',
-          maxWidth: '900px',
-          minHeight: '620px',
-          margin: '0 auto',
-          backgroundColor: '#fffdf9',
-          padding: '28px',
-          boxSizing: 'border-box',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.12)',
-          borderRadius: '6px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}
-      >
-        <div
-          style={{
-            border: '8px double #c0392b',
-            outline: '2px solid #d4ac0d',
-            outlineOffset: '-14px',
-            padding: '45px 35px',
-            height: '100%',
-            boxSizing: 'border-box',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          }}
-        >
-          <div>
-            <div style={{ fontSize: '36px', marginBottom: '5px' }}>🩸</div>
-            <h4
-              style={{
-                color: '#c0392b',
-                letterSpacing: '3px',
-                margin: '0 0 8px 0',
-                textTransform: 'uppercase',
-                fontSize: '14px'
-              }}
-            >
-              LifeLink Global Humanitarian Network
-            </h4>
-            <h1
-              style={{
-                fontSize: '38px',
-                color: '#2c3e50',
-                margin: '8px 0',
-                fontFamily: 'Georgia, serif',
-                letterSpacing: '1px'
-              }}
-            >
-              Certificate of Appreciation
-            </h1>
-            <div
-              style={{
-                width: '120px',
-                height: '3px',
-                backgroundColor: '#d4ac0d',
-                margin: '10px auto'
-              }}
-            />
-          </div>
-
-          <div style={{ margin: '20px 0' }}>
-            <p style={{ color: '#555', fontSize: '16px', margin: '0 0 10px 0', fontStyle: 'italic' }}>
-              This certificate is proudly presented to
-            </p>
-
-            <h2
-              style={{
-                fontSize: '34px',
-                color: '#c0392b',
-                margin: '8px 0 14px 0',
-                fontFamily: 'Georgia, serif',
-                borderBottom: '2px solid #bdc3c7',
-                display: 'inline-block',
-                padding: '0 40px 6px 40px'
-              }}
-            >
-              {user?.name || 'Valued LifeSaver'}
-            </h2>
-
-            <p
-              style={{
-                color: '#34495e',
-                fontSize: '16px',
-                maxWidth: '680px',
-                margin: '12px auto 0 auto',
-                lineHeight: '1.7'
-              }}
-            >
-              In grateful recognition of your selfless humanitarian act as a voluntary blood donor
-              (Blood Group: <strong style={{ color: '#c0392b' }}>{user?.bloodGroup || 'O+'}</strong>) from{' '}
-              <strong>{user?.cityCountry || 'Global Community'}</strong>, saving precious human lives in critical medical emergencies.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              alignItems: 'flex-end',
-              marginTop: '30px',
-              paddingTop: '15px',
-              fontSize: '14px',
-              color: '#2c3e50'
-            }}
-          >
-            <div>
-              <div style={{ fontWeight: 'bold', borderBottom: '1px solid #7f8c8d', paddingBottom: '4px', marginBottom: '4px', minWidth: '140px' }}>
-                {today}
-              </div>
-              <small style={{ color: '#7f8c8d' }}>Date Issued</small>
-            </div>
-
-            <div>
-              <div
-                style={{
-                  border: '2px solid #27ae60',
-                  color: '#27ae60',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  letterSpacing: '1px'
-                }}
-              >
-                ✔ VERIFIED ID: {verificationId}
-              </div>
-            </div>
-
-            <div>
-              <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontWeight: 'bold', borderBottom: '1px solid #7f8c8d', paddingBottom: '4px', marginBottom: '4px', minWidth: '160px' }}>
-                LifeLink Global Board
-              </div>
-              <small style={{ color: '#7f8c8d' }}>Authorized Signature</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="no-print" style={{ marginTop: '20px' }}>
+    <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+        <h2 style={{ color: '#8b0000', margin: 0 }}>🏆 Official Blood Donation Certificate</h2>
         <button
           onClick={() => window.print()}
           style={{
-            backgroundColor: '#c0392b',
-            color: 'white',
+            background: 'linear-gradient(90deg, #8b0000, #b8860b)',
+            color: '#fff',
             border: 'none',
-            padding: '12px 26px',
+            padding: '10px 18px',
             borderRadius: '6px',
             cursor: 'pointer',
             fontWeight: 'bold',
-            fontSize: '15px',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+            fontSize: '13px'
           }}
         >
-          🖨️ Print / Save A4 Certificate (PDF)
+          🖨️ Print / Save Certificate
         </button>
+      </div>
+
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #fdfbf5 0%, #f8efd4 50%, #fdfbf5 100%)',
+          border: '12px double #b8860b',
+          outline: '3px solid #8b0000',
+          outlineOffset: '-18px',
+          borderRadius: '8px',
+          padding: '44px 36px',
+          position: 'relative',
+          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: '#2c221e',
+          boxShadow: 'inset 0 0 40px rgba(184, 134, 11, 0.15)'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '22px' }}>
+          <div
+            style={{
+              display: 'inline-block',
+              padding: '6px 18px',
+              borderRadius: '20px',
+              backgroundColor: '#8b0000',
+              color: '#f9e79f',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              letterSpacing: '2px',
+              fontFamily: 'Arial, sans-serif',
+              marginBottom: '10px'
+            }}
+          >
+            🩸 LIFELINK HUMANITARIAN AWARD
+          </div>
+
+          <h1
+            style={{
+              color: '#8b0000',
+              margin: '4px 0',
+              fontSize: '34px',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              textShadow: '1px 1px 0px rgba(184, 134, 11, 0.35)'
+            }}
+          >
+            Certificate of Honor
+          </h1>
+
+          <div
+            style={{
+              width: '180px',
+              height: '3px',
+              background: 'linear-gradient(90deg, transparent, #b8860b, transparent)',
+              margin: '10px auto 0 auto'
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            marginLeft: '32%',
+            paddingLeft: '18px',
+            borderLeft: '4px solid #b8860b',
+            textAlign: 'left',
+            marginTop: '24px',
+            marginBottom: '24px'
+          }}
+        >
+          <p style={{ fontSize: '14px', fontStyle: 'italic', color: '#6e471b', margin: '0 0 4px 0' }}>
+            Proudly Awarded To
+          </p>
+
+          <h2
+            style={{
+              fontSize: '32px',
+              color: '#1f1612',
+              margin: '0 0 10px 0',
+              borderBottom: '2px solid #8b0000',
+              paddingBottom: '6px',
+              display: 'inline-block',
+              minWidth: '260px'
+            }}
+          >
+            {user?.name || 'Valued Blood Donor'}
+          </h2>
+
+          <div style={{ marginTop: '8px', marginBottom: '12px' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                backgroundColor: '#8b0000',
+                color: '#fff',
+                padding: '6px 14px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif',
+                fontWeight: 'bold',
+                border: '1px solid #b8860b'
+              }}
+            >
+              🏅 Total Blood Donated: {donationCount} {donationCount === 1 ? 'Time' : 'Times'} • Group ({user?.bloodGroup || 'O+'})
+            </span>
+          </div>
+
+          <p style={{ fontSize: '15px', color: '#3b2f2a', lineHeight: '1.7', margin: 0 }}>
+            In sincere recognition of your noble contribution to humanity by voluntarily donating blood{' '}
+            <strong style={{ color: '#8b0000' }}>
+              {donationCount} {donationCount === 1 ? 'Time' : 'Times'}
+            </strong>{' '}
+            through the <strong>LifeLink Emergency Network</strong>. Your selfless act has directly helped save precious human lives.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '24px',
+            marginTop: '44px',
+            paddingTop: '16px',
+            borderTop: '1px solid rgba(184, 134, 11, 0.4)'
+          }}
+        >
+          <div style={{ textAlign: 'center', minWidth: '180px' }}>
+            <div
+              style={{
+                fontFamily: "'Brush Script MT', 'Lucida Handwriting', cursive",
+                fontSize: '28px',
+                color: '#1a2530',
+                marginBottom: '2px'
+              }}
+            >
+              Sabbir
+            </div>
+            <div style={{ borderTop: '1.5px solid #5c4033', paddingTop: '6px' }}>
+              <strong style={{ fontSize: '15px', color: '#1f1612', display: 'block' }}>Sabbir</strong>
+              <span style={{ fontSize: '12px', color: '#7a5230', fontFamily: 'Arial, sans-serif', fontWeight: 'bold' }}>
+                Chief Executive Officer (CEO)
+              </span>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                width: '84px',
+                height: '84px',
+                margin: '0 auto',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, #f9e79f 0%, #d4af37 65%, #9a7d0a 100%)',
+                border: '3px double #8b0000',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#5b0000',
+                fontFamily: 'Arial, sans-serif',
+                fontWeight: 'bold',
+                boxShadow: '0 3px 10px rgba(0,0,0,0.2)'
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>🩸</span>
+              <span style={{ fontSize: '9px', letterSpacing: '1px' }}>VERIFIED</span>
+              <span style={{ fontSize: '8px' }}>{certId}</span>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center', minWidth: '180px' }}>
+            <div
+              style={{
+                fontFamily: "'Brush Script MT', 'Lucida Handwriting', cursive",
+                fontSize: '28px',
+                color: '#1a2530',
+                marginBottom: '2px'
+              }}
+            >
+              Reaydhuzzaman
+            </div>
+            <div style={{ borderTop: '1.5px solid #5c4033', paddingTop: '6px' }}>
+              <strong style={{ fontSize: '15px', color: '#1f1612', display: 'block' }}>Reaydhuzzaman</strong>
+              <span style={{ fontSize: '12px', color: '#7a5230', fontFamily: 'Arial, sans-serif', fontWeight: 'bold' }}>
+                Chairman, LifeLink
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

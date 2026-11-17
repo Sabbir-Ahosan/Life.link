@@ -72,10 +72,10 @@ export default function HomeFeed({
 
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
-                    onClick={() => onAcceptDonate(req)}
+                    onClick={() => (collab ? onOpenChat(collab) : onAcceptDonate(req))}
                     style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
                   >
-                    {collab ? '✅ Accepted (Open Dash)' : '🩸 I Will Donate'}
+                    {collab ? '✅ Open Live Chat' : '🩸 I Will Donate'}
                   </button>
 
                   <button
@@ -84,15 +84,6 @@ export default function HomeFeed({
                   >
                     🤝 Refer a Friend
                   </button>
-
-                  {collab && (
-                    <button
-                      onClick={() => onOpenChat(collab)}
-                      style={{ backgroundColor: '#8e44ad', color: '#fff', border: 'none', padding: '9px 14px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                      💬 Chat
-                    </button>
-                  )}
                 </div>
               </div>
 
@@ -101,26 +92,9 @@ export default function HomeFeed({
                   onSubmit={(e) => handleReferSubmit(e, req.id)}
                   style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f1f3f5', borderRadius: '6px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}
                 >
-                  <input
-                    type="text"
-                    required
-                    placeholder="Friend's Name"
-                    value={friendName}
-                    onChange={(e) => setFriendName(e.target.value)}
-                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
-                  />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Friend's Phone"
-                    value={friendPhone}
-                    onChange={(e) => setFriendPhone(e.target.value)}
-                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
-                  />
-                  <button
-                    type="submit"
-                    style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-                  >
+                  <input type="text" required placeholder="Friend's Name" value={friendName} onChange={(e) => setFriendName(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }} />
+                  <input type="text" required placeholder="Friend's Phone" value={friendPhone} onChange={(e) => setFriendPhone(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }} />
+                  <button type="submit" style={{ backgroundColor: '#27ae60', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                     Submit Referral
                   </button>
                 </form>
